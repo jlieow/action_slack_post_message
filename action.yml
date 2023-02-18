@@ -1,0 +1,23 @@
+# action.yaml
+name: "Informs Slack user that workflow has started"
+description: "Sends a message to a Channel via the slack chat.postMessage API."
+inputs:
+  slack_bot_user_oauth_token:
+    description: "Slack OAuth Token used to authenticate with API."
+    required: true
+  slack_channel_id:
+    description: "Slack Channel ID to send message to."
+    required: true
+  message:
+    description: "Text message to send to Slack."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Call chat.postMessage API
+      run: |
+          curl --request POST https://slack.com/api/chat.postMessage \
+          -H "Content-type: application/json; charset=utf-8" \
+          -H "Authorization: Bearer ${{ inputs.slack_bot_user_oauth_token }}" \
+          -d "{ \"text\" : \"${{ inputs.message }}\", \"channel\" : \"${{ inputs.slack_channel_id }}\" }"
+      shell: bash
